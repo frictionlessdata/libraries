@@ -1,0 +1,420 @@
+---
+title: tableschema-java
+---
+
+A Java library for working with Table Schema. Snapshots on [Jitpack](https://jitpack.io/#frictionlessdata/tableschema-java)
+
+[![Build Status](https://travis-ci.org/frictionlessdata/tableschema-java.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-java)
+[![Coverage Status](https://coveralls.io/repos/github/frictionlessdata/tableschema-java/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-java?branch=master)
+[![License](https://img.shields.io/github/license/frictionlessdata/tableschema-java.svg)](https://github.com/frictionlessdata/tableschema-java/blob/master/LICENSE)
+[![Github](https://img.shields.io/badge/github-master-brightgreen)](https://github.com/frictionlessdata/tableschema-java/tree/master/)
+[![](https://jitpack.io/v/frictionlessdata/tableschema-java.svg)](https://jitpack.io/#frictionlessdata/tableschema-java)
+[![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
+
+
+tableschema-java is a library aimed at parsing CSV and JSON-Array documents into a tabular format according
+to [Table Schema](https://frictionlessdata.io/specs/table-schema/), a format definition based on
+[JSON Schema](https://json-schema.org/understanding-json-schema/).
+
+It allows you to read and write tabular data with assurances to format integrity (it also allows reading and writing
+CSV free-form, ie. without a Schema).
+
+## Usage
+### Parsing a CSV using a Schema
+
+
+```java
+// Let's start by defining and building the schema of a table that contains data about employees:
+Schema schema = new Schema();
+
+schema.addField(new IntegerField("id"));
+schema.addField(new StringField("title"));
+// Load the data from URL with the schema.
+Table table = Table.fromSource(
+    new URL("https://raw.githubusercontent.com/frictionlessdata/tableschema-java/master" +
+            "/src/test/resources/fixtures/data/simple_data.csv"),
+    schema, DataSourceFormat.getDefaultCsvFormat());
+
+List<Object[]> allData = table.read();
+
+// [1, foo]
+// [2, bar]
+// [3, baz]
+```
+
+### Parse a CSV without a Schema
+
+Cast [data](https://raw.githubusercontent.com/frictionlessdata/tableschema-java/master/src/test/resources/fixtures/simple_data.csv) from a CSV without a schema:
+
+```java
+URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/tableschema-java/master" +
+                "/src/test/resources/fixtures/data/simple_data.csv");
+Table table = Table.fromSource(url);
+
+// Iterate through rows
+Iterator<Object[]> iter = table.iterator();
+while(iter.hasNext()){
+    Object[] row = iter.next();
+    System.out.println(Arrays.toString(row));
+}
+
+// [1, foo]
+// [2, bar]
+// [3, baz]
+
+// Read the entire CSV and output it as a List:
+List<Object[]> allData = table.read();
+```
+
+### Write a Table Into a File
+
+You can write a `Table` into a CSV file:
+
+```java
+URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/tableschema-java/master/src/test/resources/fixtures/simple_data.csv");
+Table table = Table.fromSource(url);
+table.write("/path/to/write/table.csv");
+```
+
+### Build a Schema
+
+You can build a `Schema` instance from scratch or modify an existing one:
+
+```java
+Schema schema = new Schema();
+
+Field nameField = new StringField("name");
+schema.addField(nameField);
+
+Field coordinatesField = new GeopointField("coordinates");
+schema.addField(coordinatesField);
+
+System.out.println(schema.getJson());
+
+// {"fields":[{"name":"name","format":"default","description":"","type":"string","title":""},{"name":"coordinates","format":"default","description":"","type":"geopoint","title":""}]}
+```
+
+You can also build a `Schema` instance with `JSONObject` instances instead of `Field` instances:
+
+```java
+Schema schema = new Schema(); // By default strict=false validation
+
+JSONObject nameFieldJsonObject = new JSONObject();
+nameFieldJsonObject.put("name", "name");
+nameFieldJsonObject.put("type", Field.FIELD_TYPE_STRING);
+schema.addField(nameFieldJsonObject);
+
+// Because strict=false, an invalid Field definition will be included.
+// The error will be logged/tracked in the error list schema.getErrors().
+JSONObject invalidFieldJsonObject = new JSONObject();
+invalidFieldJsonObject.put("name", "id");
+invalidFieldJsonObject.put("type", Field.FIELD_TYPE_INTEGER);
+invalidFieldJsonObject.put("format", "invalid");
+schema.addField(invalidFieldJsonObject);
+
+JSONObject coordinatesFieldJsonObject = new JSONObject();
+coordinatesFieldJsonObject.put("name", "coordinates");
+coordinatesFieldJsonObject.put("type", Field.FIELD_TYPE_GEOPOINT);
+coordinatesFieldJsonObject.put("format", Field.FIELD_FORMAT_ARRAY);
+schema.addField(coordinatesFieldJsonObject);
+
+System.out.println(schema.getJson());
+
+/*
+{"fields":[
+    {"name":"name","format":"default","type":"string"},
+    {"name":"id","format":"invalid","type":"integer"},
+    {"name":"coordinates","format":"array","type":"geopoint"}
+]}
+*/
+```
+
+When using the `addField` method, the schema undergoes validation after every field addition.
+If adding a field causes the schema to fail validation, then the field is automatically removed.
+
+Alternatively, you might want to build your `Schema` by loading the schema definition from a JSON file:
+
+```java
+String schemaFilePath = "/path/to/schema/file/shema.json";
+Schema schema = new Schema(schemaFilePath, true); // enforce validation with strict=true.
+```
+
+### Infer a Schema
+
+If you don't have a schema for a CSV and don't want to manually define one then you can generate it:
+
+```java
+URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/tableschema-java/master" +
+                                "/src/test/resources/fixtures/data/simple_data.csv");
+Table table = Table.fromSource(url);
+
+Schema schema = table.inferSchema();
+System.out.println(schema.getJson());
+
+// {"fields":[{"name":"id","format":"","description":"","title":"","type":"integer","constraints":{}},{"name":"title","format":"","description":"","title":"","type":"string","constraints":{}}]}
+
+```
+
+The type inferral algorithm tries to cast to available types and each successful type casting increments a popularity score for the successful type cast in question. At the end, the best score so far is returned.
+The inferral algorithm traverses all of the table's rows and attempts to cast every single value of the table. When dealing with large tables, you might want to limit the number of rows that the inferral algorithm processes:
+
+```java
+// Only process the first 25 rows for type inferral.
+Schema schema = table.inferSchema(25);
+```
+
+If `List<Object[]> data` and `String[] headers` are available, the schema can also be inferred from the a Schema object:
+```java
+JSONObject inferredSchema = schema.infer(data, headers);
+```
+
+Row limit can also be set:
+```java
+JSONObject inferredSchema = schema.infer(data, headers, 25);
+```
+
+Using an instance of Table or Scheme to infer a schema invokes the same method from the TypeInferred Singleton:
+```java
+TypeInferrer.getInstance().infer(data, headers, 25);
+```
+
+### Write a Schema Into a File:
+
+You can write a `Schema` into a JSON file:
+
+```java
+Schema schema = new Schema();
+
+Field nameField = new StringField("name");
+schema.addField(nameField);
+
+Field coordinatesField = new GeopointField("coordinates");
+schema.addField(coordinatesField);
+
+schema.writeJson(new File("schema.json"));
+
+```
+
+### Parse a CSV with a Schema
+
+If you have a schema, you can input it as parameter when creating the `Table` instance so that the [data](https://raw.githubusercontent.com/frictionlessdata/tableschema-java/master/src/test/resources/fixtures/employee_data.csv) from the CSV will be cast into the field types defined in the schema:
+
+```java
+// Let's start by defining and building the schema of a table that contains data on employees:
+Schema schema = new Schema();
+
+Field idField = new IntegerField("id");
+schema.addField(idField);
+
+Field nameField = new StringField("name");
+schema.addField(nameField);
+
+Field dobField = new DateField("dateOfBirth");
+schema.addField(dobField);
+
+Field isAdminField = new BooleanField("isAdmin");
+schema.addField(isAdminField);
+
+Field addressCoordinatesField = new GeopointField("addressCoordinates");
+addressCoordinatesField.setFormat(Field.FIELD_FORMAT_OBJECT);
+schema.addField(addressCoordinatesField);
+
+Field contractLengthField = new DurationField("contractLength");
+schema.addField(contractLengthField);
+
+Field infoField = new ObjectField("info");
+schema.addField(infoField);
+
+// Load the data from URL with the schema.
+URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/tableschema-java/master" +
+        "/src/test/resources/fixtures/data/employee_data.csv");
+Table table = Table.fromSource(url, schema, DataSourceFormat.getDefaultCsvFormat());
+
+Iterator<Object[]> iter = table.iterator(false, false, true, false);
+while(iter.hasNext()){
+
+    // The fetched array will contain row values that have been cast into their
+    // appropriate types as per field definitions in the schema.
+    Object[] row = iter.next();
+
+    BigInteger id = (BigInteger)row[0];
+    String name = (String)row[1];
+    LocalDate dob = (LocalDate)row[2];
+    boolean isAdmin = (boolean)row[3];
+    double[] addressCoordinates = (double[])row[4];
+    Duration contractLength = (Duration)row[5];
+    Map info = (Map)row[6];
+}
+```
+
+### Validate a Schema
+To make sure a schema complies with [Table Schema specifications](https://specs.frictionlessdata.io/table-schema/), we can validate each custom schema against the official [Table Schema schema](https://raw.githubusercontent.com/frictionlessdata/tableschema-java/master/src/main/resources/schemas/table-schema.json):
+
+```java
+JSONObject schemaJsonObj = new JSONObject();
+Field nameField = new IntegerField("id");
+schemaJsonObj.put("fields", new JSONArray());
+schemaJsonObj.getJSONArray("fields").put(nameField.getJson());
+
+Schema schema = Schema.fromJson(schemaJsonObj.toString(), true);
+
+System.out.println(schema.isValid());
+// true
+```
+
+## Setting Primary Key
+### Single Key
+```java
+Schema schema = new Schema();
+
+Field idField = new IntegerField("id");
+schema.addField(idField);
+
+Field nameField = new StringField("name");
+schema.addField(nameField);
+
+schema.setPrimaryKey("id");
+String primaryKey = schema.getPrimaryKey();
+```
+
+### Composite Key
+```java
+Schema schema = new Schema();
+
+Field idField = new IntegerField("id");
+schema.addField(idField);
+
+Field nameField = new StringField("name");
+schema.addField(nameField);
+
+Field surnameField = new StringField("surname");
+schema.addField(surnameField);
+
+schema.setPrimaryKey(new String[]{"name", "surname"});
+String[] compositeKey = schema.getPrimaryKey();
+```
+
+
+## Casting
+### Row Casting
+To check if a given set of values complies with the schema, you can use `castRow`:
+
+```java
+Schema schema = new Schema();
+
+// A String field.
+Field stringField = new Field("stringField", Field.FIELD_TYPE_STRING);
+schema.addField(stringField);
+
+// An Integer field.
+Field integerField = new Field("integerField", Field.FIELD_TYPE_INTEGER);
+schema.addField(integerField);
+
+// A Boolean field.
+Field booleanField = new Field("booleanField", Field.FIELD_TYPE_BOOLEAN);
+schema.addField(booleanField);
+
+// Define a given set of values:
+String[] row = new String[]{"John Doe", "25", "T"}
+
+// Cast the row's values into their schema defined types:
+Object[] castRow = schema.castRow(row);
+```
+
+If a value in the given set of values cannot be cast to its expected type as defined by the schema, then an `InvalidCastException` is thrown.
+
+### Field Casting
+Data values can be cast to native Java objects with a Field instance. This allows formats and constraints to be defined for the field in the [field descriptor](https://specs.frictionlessdata.io/table-schema/#field-descriptors):
+
+```java
+Field intField = new Field("id", Field.FIELD_TYPE_INTEGER);
+int intVal = intField.castValue("242");
+System.out.print(intVal);
+
+// 242
+
+Field datetimeField = new Field("date", Field.FIELD_TYPE_DATETIME);
+DateTime datetimeVal = datetimeField.castValue("2008-08-30T01:45:36.123Z");
+System.out.print(datetimeVal.getYear());
+
+// 2008
+
+Field geopointField = new Field("coordinates", Field.FIELD_TYPE_GEOPOINT, Field.FIELD_FORMAT_ARRAY);
+int[] geopointVal = geopointField.castValue("[12,21]");
+System.out.print("lon: " + geopointVal[0] + ", lat: " + geopointVal[1]);
+
+// lon: 12, lat: 21
+```
+
+Casting a value will check the value is of the expected type, is in the correct format, and complies with any constraints imposed in the descriptor.
+
+Value that can't be cast will raise an `InvalidCastException`.
+
+By default, casting a value that does not meet the constraints will raise a `ConstraintsException`.
+Constraints can be ignored with by setting a boolean flag to false:
+
+```java
+// Define constraint limiting String length between 30 and 40 characters:
+Map<String, Object> constraints = new HashMap();
+constraints.put(Field.CONSTRAINT_KEY_MIN_LENGTH, 30);
+constraints.put(Field.CONSTRAINT_KEY_MAX_LENGTH, 40);
+
+// Cast a field and cast a value that violates the above constraint.
+// Disable constrain enforcement by setting the enforceConstraints boolean flag to false.
+Field field = new Field("name", Field.FIELD_TYPE_STRING, null, null, null, constraints);
+field.castValue("This string length is greater than 45 characters.", false); // Setting false here ignores constraints during cast.
+
+// ConstraintsException will not be thrown despite casting a value that does not meet the constraints.
+```
+
+You can call the `checkConstraintViolations` method to find out which constraints are being validated.
+The method returns a map of violated constraints:
+
+```java
+Map<String, Object> constraints = new HashMap();
+constraints.put(Field.CONSTRAINT_KEY_MINIMUM, 5);
+constraints.put(Field.CONSTRAINT_KEY_MAXIMUM, 15);
+
+Field field = new Field("name", Field.FIELD_TYPE_INTEGER, null, null, null, constraints);
+
+int constraintViolatingValue = 16;
+Map<String, Object> violatedConstraints = field.checkConstraintViolations(constraintViolatingValue);
+
+System.out.println(violatedConstraints);
+
+// {maximum=15}
+```
+
+## Infer Type
+The `Field` class' `castValue` used the `TypeInferrer` singleton to cast the given value into the desired type.
+For instance, you can use the `TypeInferrer` singleton to cast a String representation of a number into a float like so:
+
+```java
+Map<String, Object> options = new HashMap();
+options.put("bareNumber", false);
+options.put("groupChar", " ");
+options.put("decimalChar", ",");
+float num = (float)TypeInferrer.getInstance().castNumber(Field.FIELD_FORMAT_DEFAULT, "1 564,123 EUR", options);
+```
+
+## Contributing
+
+Found a problem and would like to fix it? Have that great idea and would love to see it in the repository?
+
+> Please open an issue before you start working.
+
+It could save a lot of time for everyone and we are super happy to answer questions and help you along the way. Furthermore, feel free to join [frictionlessdata Gitter chat room](https://gitter.im/frictionlessdata/chat) and ask questions.
+
+This project follows the [Open Knowledge International coding standards](https://github.com/okfn/coding-standards).
+
+Get started:
+```sh
+# install jabba and maven2
+$ cd tableschema-java
+$ jabba install 1.8
+$ jabba use 1.8
+$ mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+$ mvn test -B
+```
+
+Make sure all tests pass.
