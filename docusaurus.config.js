@@ -93,7 +93,7 @@ module.exports = {
           className: "header-mainsite-link",
         },
         {
-          href: "https://github.com/frictionlessdata",
+          href: "https://github.com/frictionlessdata/project",
           position: "right",
           className: "header-github-link",
           "aria-label": "GitHub repository",
