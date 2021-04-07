@@ -45,7 +45,7 @@ function Home() {
             <span className={styles.indexCtasGitHubButtonWrapper}>
               <iframe
                 className={styles.indexCtasGitHubButton}
-                src="https://ghbtns.com/github-btn.html?user=frictionlessdata&amp;repo=frictionless-py&amp;type=star&amp;count=true&amp;size=large"
+                src="https://ghbtns.com/github-btn.html?user=frictionlessdata&amp;repo=project&amp;type=star&amp;count=true&amp;size=large"
                 width={160}
                 height={30}
                 title="GitHub Stars"
