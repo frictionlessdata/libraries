@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14
-      - name: Install and build portal
+      - name: Install and build site
         run: |
           npm install
           npm run build
@@ -32,6 +32,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: portal
+          BRANCH: site
           FOLDER: build
           CLEAN: true
