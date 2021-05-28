@@ -32,7 +32,7 @@ module.exports = {
           path: "docs",
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl:
-            "https://github.com/frictionlessdata/frictionless-py/edit/master/docs/",
+            "https://github.com/frictionlessdata/libraries/edit/master/docs/",
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
           remarkPlugins: [require("./src/plugins/remark-npm2yarn")],
@@ -93,7 +93,7 @@ module.exports = {
           className: "header-mainsite-link",
         },
         {
-          href: "https://github.com/frictionlessdata/project",
+          href: "https://github.com/frictionlessdata/libraries",
           position: "right",
           className: "header-github-link",
           "aria-label": "GitHub repository",
