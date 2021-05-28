@@ -1,5 +1,5 @@
 ---
-title: datapackage.php
+title: datapackage-php
 ---
 
 [![Travis](https://travis-ci.org/frictionlessdata/datapackage-php.svg?branch=master)](https://travis-ci.org/frictionlessdata/datapackage-php)

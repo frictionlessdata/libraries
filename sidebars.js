@@ -23,4 +23,8 @@ module.exports = {
     "data-package/swift",
     "data-package/clojure",
   ],
+  "other-libraries": [
+    "other-libraries/frictionless-ckan-mapper",
+    "other-libraries/data-package-render",
+  ],
 };

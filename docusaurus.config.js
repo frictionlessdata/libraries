@@ -82,7 +82,7 @@ module.exports = {
           position: "left",
         },
         {
-          to: "docs/other-libraries/ckan",
+          to: "docs/other-libraries/frictionless-ckan-mapper",
           label: "Other Libraries",
           position: "left",
         },
@@ -116,7 +116,7 @@ module.exports = {
             },
             {
               label: "Other Libraries",
-              to: "docs/other-libraries/ckan",
+              to: "docs/other-libraries/frictionless-ckan-mapper",
             },
           ],
         },

@@ -1,5 +1,5 @@
 ---
-title: tableschema-rlang
+title: tableschema-r
 ---
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/tableschema.r)](https://cran.r-project.org/package=tableschema.r)

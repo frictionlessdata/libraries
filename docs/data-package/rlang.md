@@ -1,5 +1,5 @@
 ---
-title: datapackage-rlang
+title: datapackage-r
 ---
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/datapackage.r)](https://cran.r-project.org/package=datapackage.r)

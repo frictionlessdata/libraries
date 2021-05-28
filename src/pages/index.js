@@ -93,7 +93,7 @@ function Home() {
               </p>
             </div>
             <div className="col">
-              <a href="docs/other-libraries/ckan">
+              <a href="docs/other-libraries/frictionless-ckan-mapper">
                 <img
                   className={styles.featureImage}
                   alt="Specifications"
