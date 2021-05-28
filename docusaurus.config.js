@@ -82,8 +82,8 @@ module.exports = {
           position: "left",
         },
         {
-          to: "docs/user-projects/some",
-          label: "User Projects",
+          to: "docs/other-libraries/ckan",
+          label: "Other Libraries",
           position: "left",
         },
         {
@@ -107,20 +107,16 @@ module.exports = {
           title: "Docs",
           items: [
             {
-              label: "Guides",
-              to: "docs/guides/guides-overview",
+              label: "Table Schema",
+              to: "docs/table-schema/python",
             },
             {
-              label: "Tutorials",
-              to: "docs/tutorials/tutorials-overview",
+              label: "Data Package",
+              to: "docs/data-package/python",
             },
             {
-              label: "References",
-              to: "docs/references/references-overview",
-            },
-            {
-              label: "Development",
-              to: "docs/development/development",
+              label: "Other Libraries",
+              to: "docs/other-libraries/ckan",
             },
           ],
         },

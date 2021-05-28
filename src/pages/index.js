@@ -32,13 +32,14 @@ function Home() {
               className={styles.heroLogo}
               src={useBaseUrl("img/example.png")}
             />
-            Data <span className={styles.heroProjectKeywords}>libraries</span>{" "}
+            Data <span className={styles.heroProjectKeywords}>libraries</span>
+            <br />
             for 10 platforms
           </h1>
           <div className={styles.indexCtas}>
             <Link
               className={styles.indexCtasGetStartedButton}
-              to={useBaseUrl("docs/guides/introduction")}
+              to={useBaseUrl("docs/table-schema/python")}
             >
               Get Started
             </Link>
@@ -68,13 +69,13 @@ function Home() {
                 <img
                   className={styles.featureImage}
                   alt="Specifications"
-                  src={useBaseUrl("img/describe.png")}
+                  src={useBaseUrl("img/table-schema.png")}
                 />
                 <h3 className="padding-top--md">Table Schema</h3>
               </a>
               <p className="padding-horiz--md">
-                You can infer, edit and save metadata of your data tables. It's
-                a first step for ensuring data quality and usability.
+                A simple format to declare a schema for tabular data. The schema
+                is designed to be expressible in JSON or YAML.
               </p>
             </div>
             <div className="col">
@@ -82,27 +83,27 @@ function Home() {
                 <img
                   className={styles.featureImage}
                   alt="Specifications"
-                  src={useBaseUrl("img/extract.png")}
+                  src={useBaseUrl("img/data-package.png")}
                 />
                 <h3 className="padding-top--md">Data Package</h3>
               </a>
               <p className="padding-horiz--md">
-                You can read your data using a unified tabular interface. Data
-                quality and consistency are guaranteed by a schema.
+                A simple container format for describing a coherent collection
+                of data in a single package of data resources.
               </p>
             </div>
             <div className="col">
-              <a href="docs/user-projects/some">
+              <a href="docs/other-libraries/ckan">
                 <img
                   className={styles.featureImage}
                   alt="Specifications"
-                  src={useBaseUrl("img/validate.png")}
+                  src={useBaseUrl("img/misc.png")}
                 />
-                <h3 className="padding-top--md">User Projects</h3>
+                <h3 className="padding-top--md">Other Libraries</h3>
               </a>
               <p className="padding-horiz--md">
-                You can read your data using a unified tabular interface. Data
-                quality and consistency are guaranteed by a schema.
+                Frictionless Data provides other usefull libraries to work with
+                data usually written in Python or JavaScript.
               </p>
             </div>
           </div>
