@@ -27,5 +27,6 @@ module.exports = {
     "other-libraries/frictionless-ckan-mapper",
     "other-libraries/data-package-pipelines",
     "other-libraries/data-package-render",
+    "other-libraries/goodread",
   ],
 };
