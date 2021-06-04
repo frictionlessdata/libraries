@@ -10,7 +10,7 @@ title: livemark-py
 
 > This software is in the early stages and not well-tested
 
-Share data insight in Markdown with interactive tables, charts, and more.
+Livemark is a Markdown static page generator that brings in interactive charts, tables, and more.
 
 ## Purpose
 
