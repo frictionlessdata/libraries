@@ -57,8 +57,8 @@ module.exports = {
     //   trackingID: 'UA-141789564-1',
     // },
     algolia: {
-      apiKey: "0632881f114cfc50b94e4bc7b970cbce",
-      indexName: "frictionless-py",
+      apiKey: "a77529da1844c2a2c51a13571734e7cb",
+      indexName: "frictionlessdata",
       algoliaOptions: {
         // facetFilters: [`version:${versions[0]}`],
       },
