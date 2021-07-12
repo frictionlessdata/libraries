@@ -51,7 +51,7 @@ module.exports = {
       darkTheme: require("prism-react-renderer/themes/dracula"),
     },
     gtag: {
-      trackingID: "G-NFPR61ZC0X",
+      trackingID: "G-WY2G1YK3M9",
     },
     // googleAnalytics: {
     //   trackingID: 'UA-141789564-1',
