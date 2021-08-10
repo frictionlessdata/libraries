@@ -2,8 +2,10 @@
 title: tableschema-swift
 ---
 
-[![TravisCI Build Status](https://travis-ci.org/frictionlessdata/tableschema-swift.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-swift)
-[![Coveralls Coverage Status](https://coveralls.io/repos/github/frictionlessdata/tableschema-swift/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-swift?branch=master)
+[![Build](https://travis-ci.org/frictionlessdata/tableschema-swift.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-swift)
+[![Coverage](https://coveralls.io/repos/github/frictionlessdata/tableschema-swift/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-swift?branch=master)
+[![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/tableschema-swift)
+[![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
 
 This is a *draft* Swift language implementation of [TableSchema](https://frictionlessdata.io/specs/table-schema/) for defining schemas to work with tabular data.
 
