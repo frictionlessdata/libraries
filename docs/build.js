@@ -10,6 +10,7 @@ const DOCS = [
   { repo: "tableschema-js", path: "table-schema/javascript.md" },
   { repo: "tableschema-rb", path: "table-schema/ruby.md" },
   { repo: "tableschema-php", path: "table-schema/php.md", branch: "master" },
+  { repo: "tableschema-java", path: "table-schema/java.md" },
 ];
 
 // Main
