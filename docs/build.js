@@ -18,7 +18,8 @@ const DOCS = [
   // { repo: "tableschema-clj", path: "table-schema/clojure.md" },
   // Data Package
   // { repo: "datapackage-py", path: "data-package/python.md" },
-  { repo: "datapackage-js", path: "data-package/javascript.md" },
+  // { repo: "datapackage-js", path: "data-package/javascript.md" },
+  { repo: "datapackage-rb", path: "data-package/ruby.md" },
 ];
 
 // Main
