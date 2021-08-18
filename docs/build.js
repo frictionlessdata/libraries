@@ -17,7 +17,8 @@ const DOCS = [
   // { repo: "tableschema-swift", path: "table-schema/swift.md" },
   // { repo: "tableschema-clj", path: "table-schema/clojure.md" },
   // Data Package
-  { repo: "datapackage-py", path: "data-package/python.md" },
+  // { repo: "datapackage-py", path: "data-package/python.md" },
+  { repo: "datapackage-js", path: "data-package/javascript.md" },
 ];
 
 // Main
