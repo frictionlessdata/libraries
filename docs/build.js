@@ -4,7 +4,11 @@ const fetch = require("node-fetch");
 // Config
 
 const URL = "https://raw.githubusercontent.com/frictionlessdata";
-const DOCS = [{ repo: "tableschema-py", path: "table-schema/python.md" }];
+const DOCS = [
+  // Table Schema
+  { repo: "tableschema-py", path: "table-schema/python.md" },
+  { repo: "tableschema-js", path: "table-schema/javascript.md" },
+];
 
 // Main
 
