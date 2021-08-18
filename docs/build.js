@@ -22,7 +22,8 @@ const DOCS = [
   // { repo: "datapackage-rb", path: "data-package/ruby.md" },
   // { repo: "datapackage-php", path: "data-package/php.md", branch: "master" },
   // { repo: "datapackage-java", path: "data-package/java.md" },
-  { repo: "datapackage-go", path: "data-package/go.md" },
+  // { repo: "datapackage-go", path: "data-package/go.md" },
+  { repo: "datapackage-r", path: "data-package/rlang.md" },
 ];
 
 // Main
