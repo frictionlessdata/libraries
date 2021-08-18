@@ -13,7 +13,8 @@ const DOCS = [
   // { repo: "tableschema-java", path: "table-schema/java.md" },
   // { repo: "tableschema-go", path: "table-schema/go.md" },
   // { repo: "tableschema-r", path: "table-schema/rlang.md", branch: "master" },
-  { repo: "TableSchema.jl", path: "table-schema/julia.md" },
+  // { repo: "TableSchema.jl", path: "table-schema/julia.md" },
+  { repo: "tableschema-swift", path: "table-schema/swift.md" },
 ];
 
 // Main
