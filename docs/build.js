@@ -23,7 +23,8 @@ const DOCS = [
   // { repo: "datapackage-php", path: "data-package/php.md", branch: "master" },
   // { repo: "datapackage-java", path: "data-package/java.md" },
   // { repo: "datapackage-go", path: "data-package/go.md" },
-  { repo: "datapackage-r", path: "data-package/rlang.md" },
+  // { repo: "datapackage-r", path: "data-package/rlang.md" },
+  { repo: "DataPackage.jl", path: "data-package/julia.md" },
 ];
 
 // Main
