@@ -1,14 +1,16 @@
 ---
-title: frictionless-ckan-mapper-py
+title: frictionless-ckan-mapper
 ---
+
+A library for mapping CKAN metadata <=> Frictionless metadata.
+
+The library has zero dependencies (not even on Data Package libs). You can use it directly or use it for inspiration. Detailed outline of the algorithm is in the docs or you can read the code.
 
 [![Travis](https://img.shields.io/travis/frictionlessdata/frictionless-ckan-mapper/master.svg)](https://travis-ci.org/frictionlessdata/frictionless-ckan-mapper)
 [![Coveralls](http://img.shields.io/coveralls/frictionlessdata/frictionless-ckan-mapper/master.svg)](https://coveralls.io/r/frictionlessdata/frictionless-ckan-mapper?branch=master)
 [![PyPi](https://img.shields.io/pypi/v/frictionless-ckan-mapper.svg)](https://pypi.python.org/pypi/frictionless-ckan-mapper)
 [![SemVer](https://img.shields.io/badge/versions-SemVer-brightgreen.svg)](http://semver.org/)
 [![Chat on Discord](https://img.shields.io/discord/695635777199145130)](https://discord.gg/2UgfM2k)
-
-A library for mapping CKAN metadata <=> Frictionless metadata. The library has zero dependencies (not even on Data Package libs). You can use it directly or use it for inspiration. Detailed outline of the algorithm is in the docs or you can read the code.
 
 <!-- toc -->
 

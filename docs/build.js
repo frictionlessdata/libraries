@@ -27,6 +27,22 @@ const DOCS = [
   { repo: "DataPackage.jl", path: "data-package/julia.md" },
   { repo: "datapackage-swift", path: "data-package/swift.md" },
   { repo: "datapackage-clj", path: "data-package/clojure.md" },
+  // Other libraries
+  {
+    repo: "frictionless-ckan-mapper",
+    path: "other-libraries/frictionless-ckan-mapper.md",
+    branch: "master",
+  },
+  {
+    repo: "datapackage-pipelines",
+    path: "other-libraries/data-package-pipelines.md",
+    branch: "master",
+  },
+  {
+    repo: "datapackage-render-js",
+    path: "other-libraries/data-package-render.md",
+    branch: "master",
+  },
 ];
 
 // Main

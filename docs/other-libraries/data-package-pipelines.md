@@ -1,5 +1,5 @@
 ---
-title: datapackage-pipelines-py
+title: datapackage-pipelines
 ---
 
 [![Travis](https://img.shields.io/travis/frictionlessdata/datapackage-pipelines/master.svg)](https://travis-ci.org/frictionlessdata/datapackage-pipelines)

@@ -2,7 +2,9 @@
 title: datapackage-render-js
 ---
 
-[![NPM](https://nodei.co/npm/datapackage-render.png)](https://nodei.co/npm/datapackage-render/)
+[![NPM](https://img.shields.io/npm/v/datapackage-render.svg)](https://www.npmjs.com/package/datapackage-render)
+[![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/datapackage-render-js)
+[![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
 
 Compile and convert Data Package views specifications.
 
@@ -12,9 +14,7 @@ Compile and convert Data Package views specifications.
 npm install datapackage-render
 ```
 
-# Usage
-
-## Library
+## Usage
 
 ```javascript
 import dprender from 'datapackage-render'
