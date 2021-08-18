@@ -25,7 +25,8 @@ const DOCS = [
   // { repo: "datapackage-go", path: "data-package/go.md" },
   // { repo: "datapackage-r", path: "data-package/rlang.md" },
   // { repo: "DataPackage.jl", path: "data-package/julia.md" },
-  { repo: "datapackage-swift", path: "data-package/swift.md" },
+  // { repo: "datapackage-swift", path: "data-package/swift.md" },
+  { repo: "datapackage-clj", path: "data-package/clojure.md" },
 ];
 
 // Main
