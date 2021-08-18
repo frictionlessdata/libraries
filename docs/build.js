@@ -11,7 +11,8 @@ const DOCS = [
   // { repo: "tableschema-rb", path: "table-schema/ruby.md" },
   // { repo: "tableschema-php", path: "table-schema/php.md", branch: "master" },
   // { repo: "tableschema-java", path: "table-schema/java.md" },
-  { repo: "tableschema-go", path: "table-schema/go.md" },
+  // { repo: "tableschema-go", path: "table-schema/go.md" },
+  { repo: "tableschema-r", path: "table-schema/rlang.md", branch: "master" },
 ];
 
 // Main
