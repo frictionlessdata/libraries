@@ -10,7 +10,7 @@ title: tableschema-php
 [![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/tableschema-php)
 [![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
 
-A utility library for working with [Table Schema](https://specs.frictionlessdata.io/table-schema/) in php.
+A utility library for working with [Table Schema](https://specs.frictionlessdata.io/table-schema/) in PHP.
 
 
 ## Features summary and Usage guide
@@ -52,7 +52,7 @@ foreach ($table as $row) {
 ```
 
 validate function will validate the schema and get some sample of the data itself to validate it as well
-
+ 
 ```php
 Table::validate(new CsvDataSource("http://invalid.data.source/"), $schema);
 ```
@@ -115,7 +115,7 @@ Schema objects can be constructed using any of the following:
 $schema = new Schema([
     'fields' => [
         [
-            'name' => 'id', 'title' => 'Identifier', 'type' => 'integer',
+            'name' => 'id', 'title' => 'Identifier', 'type' => 'integer', 
             'constraints' => [
                 "required" => true,
                 "minimum" => 1,

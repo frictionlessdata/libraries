@@ -49,7 +49,7 @@ table.read(keyed=True)
 # ]
 rows = table.source
 # 6×5 Array{Any,2}:
-#   "id"    "height"   "age"  "name"     "occupation"
+#   "id"    "height"   "age"  "name"     "occupation"         
 #  1      10.0        1       "string1"  "2012-06-15 00:00:00"
 #  2      10.1        2       "string2"  "2013-06-15 01:00:00"
 # ...

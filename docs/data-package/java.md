@@ -5,7 +5,7 @@ title: datapackage-java
 [![Build Status](https://travis-ci.org/frictionlessdata/datapackage-java.svg?branch=master)](https://travis-ci.org/frictionlessdata/datapackage-java)
 [![Coverage Status](https://coveralls.io/repos/github/frictionlessdata/datapackage-java/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/datapackage-java?branch=master)
 [![License](https://img.shields.io/github/license/frictionlessdata/datapackage-java.svg)](https://github.com/frictionlessdata/datapackage-java/blob/master/LICENSE)
-[![Release](https://jitpack.io/v/frictionlessdata/datapackage-java.svg)](https://jitpack.io/#frictionlessdata/datapackage-java)
+[![Release](https://img.shields.io/jitpack/v/github/frictionlessdata/datapackage-java)](https://jitpack.io/#frictionlessdata/datapackage-java)
 [![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/datapackage-java)
 [![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
 
@@ -63,7 +63,7 @@ Package dp = new Package(url, true); // Set strict validation to true.
 ```java
 String relativePath = "datapackage.json";
 String basePath = "/data";
-
+        
 // Build DataPackage instance based on source file path.
 Package dp = new Package(relativePath, basePath, true); // Set strict validation to true.
 ```
@@ -96,13 +96,13 @@ while(iter.hasNext()){
     String[] row = iter.next();
     String city = row[0];
     String population = row[1];
-}
+} 
 ```
 
 #### With Casting
 
 ```
-// Get Iterator.
+// Get Iterator. 
 // Third boolean is the cast flag (First on is for keyed and second for extended).
 Iterator<Object[]> iter = resource.iter(false, false, true));
 
@@ -111,7 +111,7 @@ while(iter.hasNext()){
     Object[] row = iter.next();
     String city = row[0];
     Integer population = row[1];
-}
+} 
 ```
 
 ### Edit a Data Package

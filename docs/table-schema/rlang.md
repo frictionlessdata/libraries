@@ -12,12 +12,13 @@ title: tableschema-r
 [![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/tableschema-r)
 [![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
 
-# Description
+
+## Description
 
 R library for working with [Table
 Schema](http://specs.frictionlessdata.io/table-schema/).
 
-# Features
+## Features
 
   - `Table` class for working with data and schema
   - `Schema` class for working with schemas
@@ -25,9 +26,9 @@ Schema](http://specs.frictionlessdata.io/table-schema/).
   - `validate` function for validating schema descriptors
   - `infer` function that creates a schema based on a data sample
 
-# Getting started
+## Getting started
 
-## Installation
+### Installation
 
 In order to install the latest distribution of [R
 software](https://www.r-project.org/) to your computer you have to
@@ -79,7 +80,7 @@ install.packages("tableschema.r")
 devtools::install_github("frictionlessdata/tableschema-r")
 ```
 
-## Load library
+### Load library
 
 ``` r
 # Install devtools package if not already
@@ -92,4 +93,1020 @@ library(future)
 library(tableschema.r)
 ```
 
-> TODO: fix unicode error
+## Documentation
+
+[Jsonlite package](https://CRAN.R-project.org/package=jsonlite) is
+internally used to convert json data to list objects. The input
+parameters of functions could be json strings, files or lists and the
+outputs are in list format to easily further process your data in R
+environment and exported as desired. The examples below show how to use
+jsonlite package to convert the output back to json adding indentation
+whitespace. More details about handling json you can see jsonlite
+documentation or vignettes
+[here](https://CRAN.R-project.org/package=jsonlite).
+
+Moreover [future package](https://CRAN.R-project.org/package=future) is
+also used to load and create Table and Schema classes asynchronously. To
+retrieve the actual result of the loaded Table or Schema you have to use
+`value(...)` to the variable you stored the loaded Table/Schema. More
+details about future package and sequential and parallel processing you
+can find [here](https://CRAN.R-project.org/package=future).
+
+### Working with Table
+
+A table is a core concept in a tabular data world. It represents a data
+with a metadata (Table Schema). Let’s see how we could use it in
+practice.
+
+Consider we have some local csv file. It could be inline data or remote
+link - all supported by `Table` class (except local files for in-brower
+usage of course). But say it’s `data.csv` for now:
+
+> data/cities.csv
+
+``` csv
+city,location
+london,"51.50,-0.11"
+paris,"48.85,2.30"
+rome,N/A
+```
+
+Let’s create and read a table. We use static `Table.load` method and
+`table.read` method with a `keyed` option to get list of keyed rows:
+
+``` r
+def = Table.load('inst/extdata/data.csv')
+table = value(def)
+# add indentation whitespace to JSON output with jsonlite package
+toJSON(table$read(keyed = TRUE), pretty = TRUE) # function from jsonlite package
+```
+
+    ## [
+    ##   {
+    ##     "city": ["london"],
+    ##     "location": ["\"51.50 -0.11\""]
+    ##   },
+    ##   {
+    ##     "city": ["paris"],
+    ##     "location": ["\"48.85 2.30\""]
+    ##   },
+    ##   {
+    ##     "city": ["rome"],
+    ##     "location": ["N/A"]
+    ##   }
+    ## ]
+
+``` r
+table.headers = table$headers
+table.headers
+```
+
+    ## [[1]]
+    ## [1] "city"
+    ##
+    ## [[2]]
+    ## [1] "location"
+
+As we could see our locations are just a strings. But it should be
+geopoints. Also Rome’s location is not available but it’s also just a
+`N/A` string instead of `null`. First we have to infer Table Schema:
+
+``` r
+# add indentation whitespace to JSON output with jsonlite package
+toJSON(table$infer(), pretty = TRUE) # function from jsonlite package
+```
+
+    ## {
+    ##   "fields": [
+    ##     {
+    ##       "name": ["city"],
+    ##       "type": ["string"],
+    ##       "format": ["default"]
+    ##     },
+    ##     {
+    ##       "name": ["location"],
+    ##       "type": ["string"],
+    ##       "format": ["default"]
+    ##     }
+    ##   ],
+    ##   "missingValues": [
+    ##     [""]
+    ##   ]
+    ## }
+
+``` r
+toJSON(table$schema$descriptor, pretty = TRUE) # function from jsonlite package
+```
+
+    ## {
+    ##   "fields": [
+    ##     {
+    ##       "name": ["city"],
+    ##       "type": ["string"],
+    ##       "format": ["default"]
+    ##     },
+    ##     {
+    ##       "name": ["location"],
+    ##       "type": ["string"],
+    ##       "format": ["default"]
+    ##     }
+    ##   ],
+    ##   "missingValues": [
+    ##     [""]
+    ##   ]
+    ## }
+
+``` r
+table$read(keyed = TRUE) # Fails
+```
+
+Let’s fix not available location. There is a `missingValues` property in
+Table Schema specification. As a first try we set `missingValues` to
+`N/A` in `table$schema$descriptor`. Schema descriptor could be changed
+in-place but all changes should be commited by `table$schema$commit()`:
+
+``` r
+table$schema$descriptor['missingValues'] = 'N/A'
+table$schema$commit()
+```
+
+    ## [1] TRUE
+
+``` r
+table$schema$valid # false
+```
+
+    ## [1] FALSE
+
+``` r
+table$schema$errors
+```
+
+    ## [[1]]
+    ## [1] "Descriptor validation error:\n            data.missingValues - is the wrong type"
+
+As a good citiziens we’ve decided to check out schema descriptor
+validity. And it’s not valid\! We sould use an list for `missingValues`
+property. Also don’t forget to have an empty string as a missing value:
+
+``` r
+table$schema$descriptor[['missingValues']] = list("", 'N/A')
+table$schema$commit()
+```
+
+    ## [1] TRUE
+
+``` r
+table$schema$valid # true
+```
+
+    ## [1] TRUE
+
+All good. It looks like we’re ready to read our data again:
+
+``` r
+table$read() # or
+```
+
+``` r
+toJSON(table$read(), pretty = TRUE) # function from jsonlite package
+```
+
+Now we see that:
+
+  - locations are lists with numeric lattide and longitude
+
+  - Rome’s location is `null`
+
+And because there are no errors on data reading we could be sure that
+our data is valid againt our schema. Let’s save it:
+
+``` r
+table$schema$save('schema.json')
+table$save('data.csv')
+```
+
+Our `data.csv` looks the same because it has been stringified back to
+`csv` format. But now we have `schema.json`:
+
+``` json
+{
+"fields": [
+{
+"name": "city",
+"type": "string",
+"format": "default"
+},
+{
+"name": "location",
+"type": "geopoint",
+"format": "default"
+}
+],
+"missingValues": [
+"",
+"N/A"
+]
+}
+```
+
+If we decide to improve it even more we could update the schema file and
+then open it again. But now providing a schema path.
+
+``` r
+def = Table.load('inst/extdata/data.csv', schema = 'inst/extdata/schema.json')
+table = value(def)
+table
+```
+
+    ## <Table>
+    ##   Public:
+    ##     clone: function (deep = FALSE)
+    ##     headers: active binding
+    ##     infer: function (limit = 100)
+    ##     initialize: function (src, schema = NULL, strict = FALSE, headers = 1)
+    ##     iter: function (keyed, extended, cast = TRUE, relations = FALSE, stream = FALSE)
+    ##     read: function (keyed = FALSE, extended = FALSE, cast = TRUE, relations = FALSE,
+    ##     save: function (connection)
+    ##     schema: active binding
+    ##   Private:
+    ##     createRowStream_: function (src)
+    ##     createUniqueFieldsCache: function (schema)
+    ##     currentStream_: NULL
+    ##     headers_: NULL
+    ##     headersRow_: 1
+    ##     rowNumber_: 0
+    ##     schema_: Schema, R6
+    ##     src: inst/extdata/data.csv
+    ##     strict_: FALSE
+    ##     uniqueFieldsCache_: list
+
+It was only basic introduction to the `Table` class. To learn more let’s
+take a look on `Table` class API reference.
+
+## Working with Schema
+
+A model of a schema with helpful methods for working with the schema and
+supported data. Schema instances can be initialized with a schema source
+as a url to a JSON file or a JSON object. The schema is initially
+validated (see [validate](#validate) below). By default validation
+errors will be stored in `schema$errors` but in a strict mode it will be
+instantly raised.
+
+Let’s create a blank schema. It’s not valid because `descriptor$fields`
+property is required by the [Table
+Schema](http://specs.frictionlessdata.io/table-schema/) specification:
+
+``` r
+def = Schema.load({})
+schema = value(def)
+schema$valid # false
+```
+
+    ## [1] FALSE
+
+``` r
+schema$errors
+```
+
+    ## [[1]]
+    ## [1] "Descriptor validation error:\n            data.fields - is required"
+
+To do not create a schema descriptor by hands we will use a
+`schema$infer` method to infer the descriptor from given data:
+
+``` r
+toJSON(
+  schema$infer(helpers.from.json.to.list('[
+    ["id", "age", "name"],
+    ["1","39","Paul"],
+    ["2","23","Jimmy"],
+    ["3","36","Jane"],
+    ["4","28","Judy"]
+    ]')), pretty = TRUE) # function from jsonlite package
+```
+
+    ## {
+    ##   "fields": [
+    ##     {
+    ##       "name": ["id"],
+    ##       "type": ["integer"]
+    ##     },
+    ##     {
+    ##       "name": ["age"],
+    ##       "type": ["integer"]
+    ##     },
+    ##     {
+    ##       "name": ["name"],
+    ##       "type": ["string"]
+    ##     }
+    ##   ]
+    ## }
+
+``` r
+schema$valid # true
+```
+
+    ## [1] TRUE
+
+``` r
+toJSON(
+  schema$descriptor,
+  pretty = TRUE) # function from jsonlite package
+```
+
+    ## {
+    ##   "fields": [
+    ##     {
+    ##       "name": ["id"],
+    ##       "type": ["integer"],
+    ##       "format": ["default"]
+    ##     },
+    ##     {
+    ##       "name": ["age"],
+    ##       "type": ["integer"],
+    ##       "format": ["default"]
+    ##     },
+    ##     {
+    ##       "name": ["name"],
+    ##       "type": ["string"],
+    ##       "format": ["default"]
+    ##     }
+    ##   ],
+    ##   "missingValues": [
+    ##     [""]
+    ##   ]
+    ## }
+
+Now we have an inferred schema and it’s valid. We could cast data row
+against our schema. We provide a string input by an output will be cast
+correspondingly:
+
+``` r
+toJSON(
+  schema$castRow(helpers.from.json.to.list('["5", "66", "Sam"]')),
+  pretty = TRUE, auto_unbox = TRUE) # function from jsonlite package
+```
+
+    ## [
+    ##   5,
+    ##   66,
+    ##   "Sam"
+    ## ]
+
+But if we try provide some missing value to `age` field cast will fail
+because for now only one possible missing value is an empty string.
+Let’s update our schema:
+
+``` r
+schema$castRow(helpers.from.json.to.list('["6", "N/A", "Walt"]'))
+```
+
+    ## Error in schema$castRow(helpers.from.json.to.list("[\"6\", \"N/A\", \"Walt\"]")): There are 1 cast errors (see following - Wrong type for header: age and value: N/A
+
+``` r
+# Cast error
+```
+
+``` r
+schema$descriptor$missingValues = list('', 'NA')
+schema$commit()
+```
+
+    ## [1] TRUE
+
+``` r
+schema$castRow(helpers.from.json.to.list('["6", "", "Walt"]'))
+```
+
+    ## [[1]]
+    ## [1] 6
+    ##
+    ## [[2]]
+    ## NULL
+    ##
+    ## [[3]]
+    ## [1] "Walt"
+
+We could save the schema to a local file. And we could continue the work
+in any time just loading it from the local file:
+
+``` r
+schema$save('schema.json')
+schema = Schema.load('schema.json')
+```
+
+It was only basic introduction to the `Schema` class. To learn more
+let’s take a look on `Schema` class API reference.
+
+### Working with Field
+
+Class represents field in the schema.
+
+Data values can be cast to native R types. Casting a value will check
+the value is of the expected type, is in the correct format, and
+complies with any constraints imposed by a schema.
+
+``` json
+{
+"name": "birthday",
+"type": "date",
+"format": "default",
+"constraints": {
+"required": true,
+"minimum": "2015-05-30"
+}
+}
+```
+
+Following code will not raise the exception, despite the fact our date
+is less than minimum constraints in the field, because we do not check
+constraints of the field descriptor
+
+``` r
+field = Field$new(helpers.from.json.to.list('{"name": "name", "type": "number"}'))
+dateType = field$cast_value('12345') # cast
+dateType # print the result
+```
+
+    ## [1] 12345
+
+And following example will raise exception, because we set flag ‘skip
+constraints’ to `false`, and our date is less than allowed by `minimum`
+constraints of the field. Exception will be raised as well in situation
+of trying to cast non-date format values, or empty values
+
+``` r
+tryCatch(
+  dateType = field$cast_value(value = '2014-05-29', constraints = FALSE),
+  error = function(e){# uh oh, something went wrong
+  })
+```
+
+    ## Error in private$castValue(...): Field character(0) can't cast value 2014-05-29 for type number with format default
+
+Values that can’t be cast will raise an `Error` exception. Casting a
+value that doesn’t meet the constraints will raise an `Error` exception.
+
+Table below shows the available types, formats and resultant value of
+the cast:
+
+| Type      | Formats                     | Casting result     |
+| :-------- | :-------------------------- | :----------------- |
+| any       | default                     | Any                |
+| list |    | default |                   | List               |
+| boolean   | default                     | Boolean            |
+| date      | default, any                | Date               |
+| datetime  | default, any                | Date               |
+| duration  | default                     | Duration           |
+| geojson   | default, topojson           | Object             |
+| geopoint  | default, list, object       | \[Number, Number\] |
+| integer   | default                     | Number             |
+| number    | default                     | Number             |
+| object    | default                     | Object             |
+| string    | default, uri, email, binary | String             |
+| time      | default, any                | Date               |
+| year      | default                     | Number             |
+| yearmonth | default                     | \[Number, Number\] |
+
+#### Working with Validate
+
+> `validate()` validates whether a **schema** is a validate Table Schema
+> accordingly to the
+> [specifications](https://frictionlessdata.io/schemas/table-schema.json).
+> It does **not** validate data against a schema.
+
+Given a schema descriptor `validate` returns a validation object:
+
+``` r
+valid_errors = validate('inst/extdata/schema.json')
+valid_errors
+```
+
+    ## $valid
+    ## [1] TRUE
+    ##
+    ## $errors
+    ## list()
+
+#### Working with Infer
+
+Given data source and headers `infer` will return a Table Schema as a
+JSON object based on the data values.
+
+Given the data file, example.csv:
+
+``` csv
+id,age,name
+1,39,Paul
+2,23,Jimmy
+3,36,Jane
+4,28,Judy
+```
+
+Call `infer` with headers and values from the datafile:
+
+``` r
+descriptor = infer('inst/extdata/data_infer.csv')
+```
+
+The `descriptor` variable is now a list object that can easily converted
+to JSON:
+
+``` r
+toJSON(
+  descriptor,
+  pretty = TRUE
+) # function from jsonlite package
+```
+
+    ## {
+    ##   "fields": [
+    ##     {
+    ##       "name": ["id"],
+    ##       "type": ["integer"],
+    ##       "format": ["default"]
+    ##     },
+    ##     {
+    ##       "name": ["age"],
+    ##       "type": ["integer"],
+    ##       "format": ["default"]
+    ##     },
+    ##     {
+    ##       "name": ["name"],
+    ##       "type": ["string"],
+    ##       "format": ["default"]
+    ##     }
+    ##   ],
+    ##   "missingValues": [
+    ##     [""]
+    ##   ]
+    ## }
+
+## API Reference
+
+### Table
+
+Table representation
+
+  - [Table](#Table)
+      - *instance*
+          - [$headers](#Table+headers) ⇒ `List.\<string\>`
+          - [$schema](#Table+schema) ⇒ `Schema`
+          - [$iter(keyed, extended, cast, forceCast, relations,
+            stream)](#Table+iter) ⇒ `AsyncIterator` |
+            `Stream`
+          - [$read(limit)](#Table+read) ⇒ `List.\<List\>` |
+            `List.\<Object\>`
+          - [$infer(limit)](#Table+infer) ⇒ `Object`
+          - [$save(target)](#Table+save) ⇒ `Boolean`
+      - *static*
+          - [.load(source, schema, strict, headers,
+            parserOptions)](#Table.load) ⇒ [`Table`](#Table)
+
+#### table$headers ⇒ `List.\<string\>`
+
+Headers
+
+**Returns**: `List.\<string\>` - data source headers
+
+#### table$schema ⇒ `Schema`
+
+Schema
+
+**Returns**: `Schema` - table schema instance
+
+#### table$iter(keyed, extended, cast, forceCast, relations, stream) ⇒ `AsyncIterator` | `Stream`
+
+Iterate through the table data
+
+And emits rows cast based on table schema (async for loop). With a
+`stream` flag instead of async iterator a Node stream will be returned.
+Data casting can be disabled.
+
+**Returns**: `AsyncIterator` | `Stream` - async
+iterator/stream of rows: - `[value1, value2]` - base - `{header1:
+value1, header2: value2}` - keyed - `[rowNumber, [header1, header2],
+[value1, value2]]` - extended **Throws**:
+
+  - `TableSchemaError` raises any error occurred in this
+    process
+
+| Param     | Type                 | Description                                                                                                                                                                                                                                                                           |
+| --------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| keyed     | `boolean` | iter keyed rows                                                                                                                                                                                                                                                                       |
+| extended  | `boolean` | iter extended rows                                                                                                                                                                                                                                                                    |
+| cast      | `boolean` | disable data casting if false                                                                                                                                                                                                                                                         |
+| forceCast | `boolean` | instead of raising on the first row with cast error return an error object to replace failed row. It will allow to iterate over the whole data file even if it’s not compliant to the schema. Example of output stream: `[['val1', 'val2'], TableSchemaError, ['val3', 'val4'], ...]` |
+| relations | `Object`  | object of foreign key references in a form of `{resource1: [{field1: value1, field2: value2}, ...], ...}`. If provided foreign key fields will checked and resolved to its references                                                                                                 |
+| stream    | `boolean` | return Node Readable Stream of table rows                                                                                                                                                                                                                                             |
+
+#### table$read(limit) ⇒ `List.\<List\>` | `List.\<Object\>`
+
+Read the table data into memory
+
+> The API is the same as `table.iter` has except for:
+
+**Returns**: `List.\<List\>` | `List.\<Object\>` -
+list of rows: - `[value1, value2]` - base - `{header1: value1, header2:
+value2}` - keyed - `[rowNumber, [header1, header2], [value1, value2]]` -
+extended
+
+| Param | Type                 | Description           |
+| ----- | -------------------- | --------------------- |
+| limit | `integer` | limit of rows to read |
+
+#### table$infer(limit) ⇒ `Object`
+
+Infer a schema for the table.
+
+It will infer and set Table Schema to `table.schema` based on table
+data.
+
+**Returns**: `Object` - Table Schema descriptor
+
+| Param | Type                | Description            |
+| ----- | ------------------- | ---------------------- |
+| limit | `number` | limit rows sample size |
+
+#### table$save(target) ⇒ `Boolean`
+
+Save data source to file locally in CSV format with `,` (comma)
+delimiter
+
+**Returns**: `Boolean` - true on success **Throws**:
+
+  - `TableSchemaError` an error if there is saving problem
+
+| Param  | Type                | Description                     |
+| ------ | ------------------- | ------------------------------- |
+| target | `string` | path where to save a table data |
+
+#### Table.load(source, schema, strict, headers, parserOptions) ⇒ [`Table`](#Table)
+
+Factory method to instantiate `Table` class.
+
+This method is async and it should be used with await keyword or as a
+`Promise`. If `references` argument is provided foreign keys will be
+checked on any reading operation.
+
+**Returns**: [`Table`](#Table) - data table class instance
+**Throws**:
+
+  - `TableSchemaError` raises any error occurred in table
+    creation process
+
+| Param         | Type                                                                                           | Description                                                                                                                                                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| source        | `string` | `List.\<List\>` | `Stream` | `function` | data source (one of): - local CSV file (path) - remote CSV file (url) - list of lists representing the rows - readable stream with CSV file contents - function returning readable stream with CSV file contents |
+| schema        | `string` | `Object`                                                      | data schema in all forms supported by `Schema` class                                                                                                                                                             |
+| strict        | `boolean`                                                                           | strictness option to pass to `Schema` constructor                                                                                                                                                                |
+| headers       | `number` | `List.\<string\>`                                             | data source headers (one of): - row number containing headers (`source` should contain headers rows) - list of headers (`source` should NOT contain headers rows)                                                |
+| parserOptions | `Object`                                                                            | options to be used by CSV parser. All options listed at <https://csv.js.org/parse/options/>. By default `ltrim` is true according to the CSV Dialect spec.                                                       |
+
+### Schema
+
+Schema representation
+
+  - [Schema](#Schema)
+      - *instance*
+          - [$valid](#Schema+valid) ⇒ `Boolean`
+          - [$errors](#Schema+errors) ⇒ `List.\<Error\>`
+          - [$descriptor](#Schema+descriptor) ⇒ `Object`
+          - [$primaryKey](#Schema+primaryKey) ⇒
+            `List.\<string\>`
+          - [$foreignKeys](#Schema+foreignKeys) ⇒
+            `List.\<Object\>`
+          - [$fields](#Schema+fields) ⇒ `List.\<Field\>`
+          - [$fieldNames](#Schema+fieldNames) ⇒
+            `List.\<string\>`
+          - [$getField(fieldName)](#Schema+getField) ⇒
+            `Field` | `null`
+          - [$addField(descriptor)](#Schema+addField) ⇒
+            `Field`
+          - [$removeField(name)](#Schema+removeField) ⇒
+            `Field` | `null`
+          - [$castRow(row, failFalst)](#Schema+castRow) ⇒
+            `List.\<List\>`
+          - [$infer(rows, headers)](#Schema+infer) ⇒ `Object`
+          - [$commit(strict)](#Schema+commit) ⇒ `Boolean`
+          - [$save(target)](#Schema+save) ⇒ `boolean`
+      - *static*
+          - [.load(descriptor, strict)](#Schema.load) ⇒
+            [`Schema`](#Schema)
+
+#### schema$valid ⇒ `Boolean`
+
+Validation status
+
+It always `true` in strict mode.
+
+**Returns**: `Boolean` - returns validation status
+
+#### schema$errors ⇒ `List.\<Error\>`
+
+Validation errors
+
+It always empty in strict mode.
+
+**Returns**: `List.\<Error\>` - returns validation errors
+
+#### schema$descriptor ⇒ `Object`
+
+Descriptor
+
+**Returns**: `Object` - schema descriptor
+
+#### schema$primaryKey ⇒ `List.\<string\>`
+
+Primary Key
+
+**Returns**: `List.\<string\>` - schema primary key
+
+#### schema$foreignKeys ⇒ `List.\<Object\>`
+
+Foreign Keys
+
+**Returns**: `List.\<Object\>` - schema foreign keys
+
+#### schema$fields ⇒ `List.\<Field\>`
+
+Fields
+
+**Returns**: `List.\<Field\>` - schema fields
+
+#### schema$fieldNames ⇒ `List.\<string\>`
+
+Field names
+
+**Returns**: `List.\<string\>` - schema field names
+
+#### schema$getField(fieldName) ⇒ `Field` | `null`
+
+Return a field
+
+**Returns**: `Field` | `null` - field instance if
+exists
+
+| Param     | Type                |
+| --------- | ------------------- |
+| fieldName | `string` |
+
+#### schema$addField(descriptor) ⇒ `Field`
+
+Add a field
+
+**Returns**: `Field` - added field instance
+
+| Param      | Type                |
+| ---------- | ------------------- |
+| descriptor | `Object` |
+
+#### schema$removeField(name) ⇒ `Field` | `null`
+
+Remove a field
+
+**Returns**: `Field` | `null` - removed field
+instance if exists
+
+| Param | Type                |
+| ----- | ------------------- |
+| name  | `string` |
+
+#### schema$castRow(row, failFalst) ⇒ `List.\<List\>`
+
+Cast row based on field types and formats.
+
+**Returns**: `List.\<List\>` - cast data row
+
+| Param     | Type                       | Description                   |
+| --------- | -------------------------- | ----------------------------- |
+| row       | `List.\<List\>` | data row as an list of values |
+| failFalst | `boolean`       |                               |
+
+#### schema$infer(rows, headers) ⇒ `Object`
+
+Infer and set `schema.descriptor` based on data sample.
+
+**Returns**: `Object` - Table Schema descriptor
+
+| Param   | Type                                                | Description                                                                                                                                                                   |
+| ------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| rows    | `List.\<List\>`                          | list of lists representing rows                                                                                                                                               |
+| headers | `integer` | `List.\<string\>` | data sample headers (one of): - row number containing headers (`rows` should contain headers rows) - list of headers (`rows` should NOT contain headers rows) - defaults to 1 |
+
+#### schema$commit(strict) ⇒ `Boolean`
+
+Update schema instance if there are in-place changes in the descriptor.
+
+**Returns**: `Boolean` - returns true on success and false if
+not modified **Throws**:
+
+  - `TableSchemaError` raises any error occurred in the
+    process
+
+| Param  | Type                 | Description                          |
+| ------ | -------------------- | ------------------------------------ |
+| strict | `boolean` | alter `strict` mode for further work |
+
+**Example**
+
+``` r
+descriptor <- '{"fields": [{"name": "field", "type": "string"}]}'
+def <- Schema.load(descriptor)
+schema <- value(def)
+schema$getField('name')
+```
+
+    ## NULL
+
+``` r
+schema$descriptor$fields[[1]]$type
+```
+
+    ## [1] "string"
+
+``` r
+schema$descriptor$fields[[1]]$type <-'number'
+schema$descriptor$fields[[1]]$type
+```
+
+    ## [1] "number"
+
+``` r
+schema$commit()
+```
+
+    ## [1] TRUE
+
+#### schema$save(target) ⇒ `boolean`
+
+Save schema descriptor to target destination.
+
+**Returns**: `boolean` - returns true on success **Throws**:
+
+  - `TableSchemaError` raises any error occurred in the
+    process
+
+| Param  | Type                | Description                     |
+| ------ | ------------------- | ------------------------------- |
+| target | `string` | path where to save a descriptor |
+
+#### Schema.load(descriptor, strict) ⇒ [`Schema`](#Schema)
+
+Factory method to instantiate `Schema` class.
+
+This method is async and it should be used with await keyword or as a
+`Promise`.
+
+**Returns**: [`Schema`](#Schema) - returns schema class
+instance **Throws**:
+
+  - `TableSchemaError` raises any error occurred in the
+    process
+
+| Param      | Type                                      | Description                                                                                                                                                                                    |
+| ---------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| descriptor | `string` | `Object` | schema descriptor: - local path - remote url - object                                                                                                                                          |
+| strict     | `boolean`                      | flag to alter validation behaviour: - if false error will not be raised and all error will be collected in `schema.errors` - if strict is true any validation error will be raised immediately |
+
+### Field
+
+Field representation
+
+  - [Field](#Field)
+      - [new Field(descriptor, missingValues)](#new_Field_new)
+      - [$name](#Field+name) ⇒ `string`
+      - [$type](#Field+type) ⇒ `string`
+      - [$format](#Field+format) ⇒ `string`
+      - [$required](#Field+required) ⇒ `boolean`
+      - [$constraints](#Field+constraints) ⇒ `Object`
+      - [$descriptor](#Field+descriptor) ⇒ `Object`
+      - [$castValue(value, constraints)](#Field+castValue) ⇒
+        `any`
+      - [$testValue(value, constraints)](#Field+testValue) ⇒
+        `boolean`
+
+#### new Field(descriptor, missingValues)
+
+Constructor to instantiate `Field` class.
+
+**Returns**: [`Field`](#Field) - returns field class instance
+**Throws**:
+
+  - `TableSchemaError` raises any error occured in the
+    process
+
+| Param         | Type                         | Description                                     |
+| ------------- | ---------------------------- | ----------------------------------------------- |
+| descriptor    | `Object`          | schema field descriptor                         |
+| missingValues | `List.\<string\>` | an list with string representing missing values |
+
+#### field$name ⇒ `string`
+
+Field name
+
+#### field$type ⇒ `string`
+
+Field type
+
+#### field$format ⇒ `string`
+
+Field format
+
+#### field$required ⇒ `boolean`
+
+Return true if field is required
+
+#### field$constraints ⇒ `Object`
+
+Field constraints
+
+#### field$descriptor ⇒ `Object`
+
+Field descriptor
+
+#### field$castValue(value, constraints) ⇒ `any`
+
+Cast value
+
+**Returns**: `any` - cast value
+
+| Param       | Type                                     | Description   |
+| ----------- | ---------------------------------------- | ------------- |
+| value       | `any`                         | value to cast |
+| constraints | `Object` | `false` |               |
+
+#### field$testValue(value, constraints) ⇒ `boolean`
+
+Check if value can be cast
+
+| Param       | Type                                     | Description   |
+| ----------- | ---------------------------------------- | ------------- |
+| value       | `any`                         | value to test |
+| constraints | `Object` | `false` |               |
+
+### validate(descriptor) ⇒ `Object`
+
+This function is async so it has to be used with `await` keyword or as a
+`Promise`.
+
+**Returns**: `Object` - returns `{valid, errors}` object
+
+| Param      | Type                                      | Description                                                    |
+| ---------- | ----------------------------------------- | -------------------------------------------------------------- |
+| descriptor | `string` | `Object` | schema descriptor (one of): - local path - remote url - object |
+
+### infer(source, headers, options) ⇒ `Object`
+
+This function is async so it has to be used with `await` keyword or as a
+`Promise`.
+
+**Returns**: `Object` - returns schema descriptor **Throws**:
+
+  - `TableSchemaError` raises any error occured in the
+    process
+
+| Param   | Type                                                                                           | Description                                                                                                                                                                                                      |
+| ------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| source  | `string` | `List.\<List\>` | `Stream` | `function` | data source (one of): - local CSV file (path) - remote CSV file (url) - list of lists representing the rows - readable stream with CSV file contents - function returning readable stream with CSV file contents |
+| headers | `List.\<string\>`                                                                   | list of headers                                                                                                                                                                                                  |
+| options | `Object`                                                                            | any `Table.load` options                                                                                                                                                                                         |
+
+## Contributing
+
+The project follows the [Open Knowledge International coding
+standards](https://github.com/okfn/coding-standards). There are common
+commands to work with the project.Recommended way to get started is to
+create, activate and load the library environment. To install package
+and development dependencies into active environment:
+
+``` r
+devtools::install_github("frictionlessdata/tableschema-r", dependencies = TRUE)
+```
+
+To make test:
+
+``` r
+test_that(description, {
+  expect_equal(test, expected result)
+})
+```
+
+To run tests:
+
+``` r
+devtools::test()
+```
+
+More detailed information about how to create and run tests you can find
+in [testthat package](https://github.com/hadley/testthat).
+
+## Changelog - News
+
+In
+[NEWS.md](https://github.com/frictionlessdata/tableschema-r/blob/master/NEWS.md)
+described only breaking and the most important changes. The full
+changelog could be found in nicely formatted
+[commit](https://github.com/frictionlessdata/tableschema-r/commits/master)
+history.

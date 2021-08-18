@@ -5,13 +5,13 @@ title: tableschema-java
 [![Build Status](https://travis-ci.org/frictionlessdata/tableschema-java.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-java)
 [![Coverage Status](https://coveralls.io/repos/github/frictionlessdata/tableschema-java/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-java?branch=master)
 [![License](https://img.shields.io/github/license/frictionlessdata/tableschema-java.svg)](https://github.com/frictionlessdata/tableschema-java/blob/master/LICENSE)
-[![Release](https://jitpack.io/v/frictionlessdata/tableschema-java.svg)](https://jitpack.io/#frictionlessdata/tableschema-java)
+[![Release](https://img.shields.io/jitpack/v/github/frictionlessdata/tableschema-java)](https://jitpack.io/#frictionlessdata/tableschema-java)
 [![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/tableschema-java)
 [![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
 
 A Java library for working with Table Schema. Snapshots on [Jitpack](https://jitpack.io/#frictionlessdata/tableschema-java).
-tableschema-java is a library aimed at parsing CSV and JSON-Array documents into a tabular format according
-to [Table Schema](https://frictionlessdata.io/specs/table-schema/), a format definition based on
+tableschema-java is a library aimed at parsing CSV and JSON-Array documents into a tabular format according 
+to [Table Schema](https://frictionlessdata.io/specs/table-schema/), a format definition based on 
 [JSON Schema](https://json-schema.org/understanding-json-schema/).
 
 It allows you to read and write tabular data with assurances to format integrity (it also allows reading and writing
@@ -118,7 +118,7 @@ schema.addField(coordinatesFieldJsonObject);
 
 System.out.println(schema.getJson());
 
-/*
+/* 
 {"fields":[
     {"name":"name","format":"default","type":"string"},
     {"name":"id","format":"invalid","type":"integer"},
@@ -190,7 +190,7 @@ Field coordinatesField = new GeopointField("coordinates");
 schema.addField(coordinatesField);
 
 schema.writeJson(new File("schema.json"));
-
+   
 ```
 
 ### Parse a CSV with a Schema
@@ -299,7 +299,7 @@ To check if a given set of values complies with the schema, you can use `castRow
 
 ```java
 Schema schema = new Schema();
-
+        
 // A String field.
 Field stringField = new Field("stringField", Field.FIELD_TYPE_STRING);
 schema.addField(stringField);
@@ -315,7 +315,7 @@ schema.addField(booleanField);
 // Define a given set of values:
 String[] row = new String[]{"John Doe", "25", "T"}
 
-// Cast the row's values into their schema defined types:
+// Cast the row's values into their schema defined types: 
 Object[] castRow = schema.castRow(row);
 ```
 
@@ -392,7 +392,7 @@ Map<String, Object> options = new HashMap();
 options.put("bareNumber", false);
 options.put("groupChar", " ");
 options.put("decimalChar", ",");
-float num = (float)TypeInferrer.getInstance().castNumber(Field.FIELD_FORMAT_DEFAULT, "1 564,123 EUR", options);
+float num = (float)TypeInferrer.getInstance().castNumber(Field.FIELD_FORMAT_DEFAULT, "1 564,123 EUR", options);    
 ```
 
 ## Contributing

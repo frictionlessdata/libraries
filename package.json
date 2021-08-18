@@ -5,6 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
+    "prebuild": "node docs/build.js",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -44,6 +45,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "node-fetch": "^2.6.1",
     "raw-loader": "^4.0.2"
   },
   "browserslist": {
