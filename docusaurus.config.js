@@ -87,6 +87,11 @@ module.exports = {
           position: "left",
         },
         {
+          to: "docs/status",
+          label: "Status",
+          position: "left",
+        },
+        {
           href: "https://frictionlessdata.io/",
           label: "Back to the main site",
           position: "right",
