@@ -52,7 +52,7 @@ foreach ($table as $row) {
 ```
 
 validate function will validate the schema and get some sample of the data itself to validate it as well
-
+ 
 ```php
 Table::validate(new CsvDataSource("http://invalid.data.source/"), $schema);
 ```
@@ -115,7 +115,7 @@ Schema objects can be constructed using any of the following:
 $schema = new Schema([
     'fields' => [
         [
-            'name' => 'id', 'title' => 'Identifier', 'type' => 'integer',
+            'name' => 'id', 'title' => 'Identifier', 'type' => 'integer', 
             'constraints' => [
                 "required" => true,
                 "minimum" => 1,
