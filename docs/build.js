@@ -19,7 +19,8 @@ const DOCS = [
   // Data Package
   // { repo: "datapackage-py", path: "data-package/python.md" },
   // { repo: "datapackage-js", path: "data-package/javascript.md" },
-  { repo: "datapackage-rb", path: "data-package/ruby.md" },
+  // { repo: "datapackage-rb", path: "data-package/ruby.md" },
+  { repo: "datapackage-php", path: "data-package/php.md", branch: "master" },
 ];
 
 // Main
