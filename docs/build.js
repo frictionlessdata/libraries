@@ -8,6 +8,7 @@ const DOCS = [
   // Table Schema
   { repo: "tableschema-py", path: "table-schema/python.md" },
   { repo: "tableschema-js", path: "table-schema/javascript.md" },
+  { repo: "tableschema-rb", path: "table-schema/ruby.md" },
 ];
 
 // Main
