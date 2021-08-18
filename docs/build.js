@@ -11,10 +11,10 @@ const DOCS = [
   { repo: "tableschema-rb", path: "table-schema/ruby.md" },
   { repo: "tableschema-php", path: "table-schema/php.md", branch: "master" },
   { repo: "tableschema-java", path: "table-schema/java.md" },
+  { repo: "tableschema-swift", path: "table-schema/swift.md" },
   { repo: "tableschema-go", path: "table-schema/go.md" },
   { repo: "tableschema-r", path: "table-schema/rlang.md", branch: "master" },
   { repo: "TableSchema.jl", path: "table-schema/julia.md" },
-  { repo: "tableschema-swift", path: "table-schema/swift.md" },
   { repo: "tableschema-clj", path: "table-schema/clojure.md" },
   // Data Package
   { repo: "datapackage-py", path: "data-package/python.md" },
@@ -22,10 +22,10 @@ const DOCS = [
   { repo: "datapackage-rb", path: "data-package/ruby.md" },
   { repo: "datapackage-php", path: "data-package/php.md", branch: "master" },
   { repo: "datapackage-java", path: "data-package/java.md" },
+  { repo: "datapackage-swift", path: "data-package/swift.md" },
   { repo: "datapackage-go", path: "data-package/go.md" },
   { repo: "datapackage-r", path: "data-package/rlang.md", branch: "master" },
   { repo: "DataPackage.jl", path: "data-package/julia.md" },
-  { repo: "datapackage-swift", path: "data-package/swift.md" },
   { repo: "datapackage-clj", path: "data-package/clojure.md" },
   // Other libraries
   {
