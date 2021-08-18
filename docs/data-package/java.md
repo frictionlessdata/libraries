@@ -63,7 +63,7 @@ Package dp = new Package(url, true); // Set strict validation to true.
 ```java
 String relativePath = "datapackage.json";
 String basePath = "/data";
-
+        
 // Build DataPackage instance based on source file path.
 Package dp = new Package(relativePath, basePath, true); // Set strict validation to true.
 ```
@@ -96,13 +96,13 @@ while(iter.hasNext()){
     String[] row = iter.next();
     String city = row[0];
     String population = row[1];
-}
+} 
 ```
 
 #### With Casting
 
 ```
-// Get Iterator.
+// Get Iterator. 
 // Third boolean is the cast flag (First on is for keyed and second for extended).
 Iterator<Object[]> iter = resource.iter(false, false, true));
 
@@ -111,7 +111,7 @@ while(iter.hasNext()){
     Object[] row = iter.next();
     String city = row[0];
     Integer population = row[1];
-}
+} 
 ```
 
 ### Edit a Data Package

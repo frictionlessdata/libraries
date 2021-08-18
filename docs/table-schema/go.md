@@ -2,24 +2,24 @@
 title: tableschema-go
 ---
 
-[![Build Status](https://travis-ci.org/frictionlessdata/tableschema-go.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-go)
-[![Coverage Status](https://coveralls.io/repos/github/frictionlessdata/tableschema-go/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-go?branch=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/frictionlessdata/tableschema-go)](https://goreportcard.com/report/github.com/frictionlessdata/tableschema-go)
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/frictionlessdata/chat)
-[![GoDoc](https://godoc.org/github.com/frictionlessdata/tableschema-go?status.svg)](https://godoc.org/github.com/frictionlessdata/tableschema-go)
+[![Build Status](https://travis-ci.org/frictionlessdata/tableschema-go.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-go) 
+[![Coverage Status](https://coveralls.io/repos/github/frictionlessdata/tableschema-go/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-go?branch=master) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/frictionlessdata/tableschema-go)](https://goreportcard.com/report/github.com/frictionlessdata/tableschema-go) 
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/frictionlessdata/chat) 
+[![GoDoc](https://godoc.org/github.com/frictionlessdata/tableschema-go?status.svg)](https://godoc.org/github.com/frictionlessdata/tableschema-go) 
 [![Sourcegraph](https://sourcegraph.com/github.com/frictionlessdata/tableschema-go/-/badge.svg)](https://sourcegraph.com/github.com/frictionlessdata/tableschema-go?badge)
 [![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/tableschema-go)
 [![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
 
 [Table schema](http://specs.frictionlessdata.io/table-schema/) tooling in Go.
 
-# Getting started
+## Getting started
 
-## Installation
+### Installation
 
-This package uses [semantic versioning 2.0.0](http://semver.org/).
+This package uses [semantic versioning 2.0.0](http://semver.org/). 
 
-### Go version >= 1.11
+#### Go version >= 1.11
 
 Please [use go modules](https://blog.golang.org/using-go-modules) if you're using a version that supports it. To know which version of Go you're running, please run:
 
@@ -28,7 +28,7 @@ $ go version
 go version go1.14 linux/amd64
 ```
 
-If you're running go1.13+, you're good to go!
+If you're running go1.13+, you're good to go! 
 
 If you can not upgrade right now, you need to make sure your environment is using Go modules by setting the `GO111MODULE` environment variable. In bash, that could be done with the following command:
 
@@ -36,18 +36,18 @@ If you can not upgrade right now, you need to make sure your environment is usin
 $ export GO111MODULE=on
 ```
 
-### Go version >= 1.8 && < 1.11
+#### Go version >= 1.8 && < 1.11
 
 ```sh
 $ dep init
 $ dep ensure -add github.com/frictionlessdata/tableschema-go/csv@>=0.1
 ```
 
-# Main Features
+## Main Features
 
-## Tabular Data Load
+### Tabular Data Load
 
-Have tabular data stored in local files? Remote files? Packages like the [csv](https://godoc.org/github.com/frictionlessdata/tableschema-go/csv) are going to help on loading the data you need and making it ready for processing.
+Have tabular data stored in local files? Remote files? Packages like the [csv](https://godoc.org/github.com/frictionlessdata/tableschema-go/csv) are going to help on loading the data you need and making it ready for processing. 
 
 ```go
 package main
@@ -66,7 +66,7 @@ Supported physical representations:
 
 You would like to use tableschema-go but the physical representation you use is not listed here? No problem! Please create an issue before start contributing. We will be happy to help you along the way.
 
-## Schema Inference and Configuration
+### Schema Inference and Configuration
 
 Got that new dataset and wants to start getting your hands dirty ASAP? No problems, let the [schema package](https://github.com/frictionlessdata/tableschema-go/tree/master/schema) try to infer
 the data types based on the table data.
@@ -115,7 +115,7 @@ Finally, if your schema is saved remotely, you can also use it:
 sch, _ := schema.LoadRemote("http://myfoobar/users/schema.json")
 ```
 
-## Processing Tabular Data
+### Processing Tabular Data
 
 Once you have the data, you would like to process using language data types. [schema.CastTable](https://godoc.org/github.com/frictionlessdata/tableschema-go/schema#example-Schema-CastTable) and [schema.CastRow](https://godoc.org/github.com/frictionlessdata/tableschema-go/schema#example-Schema-CastRow) are your friends on this journey.
 
@@ -170,7 +170,7 @@ If you store data in a GZIP file, you can load it compressed using the same `csv
 * [Table](https://godoc.org/github.com/frictionlessdata/tableschema-go/table#Table)
 * [Iterator](https://godoc.org/github.com/frictionlessdata/tableschema-go/table#Iterator)
 
-### Field
+#### Field
 
 Class represents field in the schema.
 
@@ -217,12 +217,12 @@ Available types, formats and resultant value of the cast:
 | year | default | time.Time |
 | yearmonth | default | time.Time |
 
-## Saving Tabular Data
+### Saving Tabular Data
 
 Once you're done processing the data, it is time to persist results. As an example, let us assume we have a remote table schema called `summary`, which contains two fields:
 
 * `Date`: of type [date](https://specs.frictionlessdata.io/table-schema/#date)
-* `AverageAge`: of type [number](https://specs.frictionlessdata.io/table-schema/#number)
+* `AverageAge`: of type [number](https://specs.frictionlessdata.io/table-schema/#number) 
 
 
 ```go
@@ -254,11 +254,11 @@ func WriteSummary(summary []summaryEntry, path string) {
 }
 ```
 
-# API Reference and More Examples
+## API Reference and More Examples
 
 More detailed documentation about API methods and plenty of examples is available at [https://godoc.org/github.com/frictionlessdata/tableschema-go](https://godoc.org/github.com/frictionlessdata/tableschema-go)
 
-# Contributing
+## Contributing
 
 Found a problem and would like to fix it? Have that great idea and would love to see it in the repository?
 
