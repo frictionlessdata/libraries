@@ -2,11 +2,11 @@
 title: tableschema-go
 ---
 
-[![Build Status](https://travis-ci.org/frictionlessdata/tableschema-go.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-go)
-[![Coverage Status](https://coveralls.io/repos/github/frictionlessdata/tableschema-go/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-go?branch=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/frictionlessdata/tableschema-go)](https://goreportcard.com/report/github.com/frictionlessdata/tableschema-go)
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/frictionlessdata/chat)
-[![GoDoc](https://godoc.org/github.com/frictionlessdata/tableschema-go?status.svg)](https://godoc.org/github.com/frictionlessdata/tableschema-go)
+[![Build Status](https://travis-ci.org/frictionlessdata/tableschema-go.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-go) 
+[![Coverage Status](https://coveralls.io/repos/github/frictionlessdata/tableschema-go/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-go?branch=master) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/frictionlessdata/tableschema-go)](https://goreportcard.com/report/github.com/frictionlessdata/tableschema-go) 
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/frictionlessdata/chat) 
+[![GoDoc](https://godoc.org/github.com/frictionlessdata/tableschema-go?status.svg)](https://godoc.org/github.com/frictionlessdata/tableschema-go) 
 [![Sourcegraph](https://sourcegraph.com/github.com/frictionlessdata/tableschema-go/-/badge.svg)](https://sourcegraph.com/github.com/frictionlessdata/tableschema-go?badge)
 [![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/tableschema-go)
 [![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
@@ -17,7 +17,7 @@ title: tableschema-go
 
 ## Installation
 
-This package uses [semantic versioning 2.0.0](http://semver.org/).
+This package uses [semantic versioning 2.0.0](http://semver.org/). 
 
 ### Go version >= 1.11
 
@@ -28,7 +28,7 @@ $ go version
 go version go1.14 linux/amd64
 ```
 
-If you're running go1.13+, you're good to go!
+If you're running go1.13+, you're good to go! 
 
 If you can not upgrade right now, you need to make sure your environment is using Go modules by setting the `GO111MODULE` environment variable. In bash, that could be done with the following command:
 
@@ -47,7 +47,7 @@ $ dep ensure -add github.com/frictionlessdata/tableschema-go/csv@>=0.1
 
 ## Tabular Data Load
 
-Have tabular data stored in local files? Remote files? Packages like the [csv](https://godoc.org/github.com/frictionlessdata/tableschema-go/csv) are going to help on loading the data you need and making it ready for processing.
+Have tabular data stored in local files? Remote files? Packages like the [csv](https://godoc.org/github.com/frictionlessdata/tableschema-go/csv) are going to help on loading the data you need and making it ready for processing. 
 
 ```go
 package main
@@ -157,6 +157,14 @@ If you have a lot of data and can no load everything in memory, you can easily i
 ...
 ```
 
+If you store data in a GZIP file, you can load it compressed using the same `csv.FromFile`:
+
+```go
+...
+   tab, _ := csv.NewTable(csv.FromFile("users.csv.gz"), csv.LoadHeaders())
+...
+```
+
 > Even better if you could do it regardless the physical representation! The [table](https://godoc.org/github.com/frictionlessdata/tableschema-go/table) package declares some interfaces that will help you to achieve this goal:
 
 * [Table](https://godoc.org/github.com/frictionlessdata/tableschema-go/table#Table)
@@ -203,9 +211,9 @@ Available types, formats and resultant value of the cast:
 | integer | default | int64 |
 | number | default | float64 |
 | string | default, uri, email, binary | string |
-| date | default, any, \<PATTERN\> | time.Time |
-| datetime | default, any, \<PATTERN\> | time.Time |
-| time | default, any, \<PATTERN\> | time.Time |
+| date | default, any, <PATTERN> | time.Time |
+| datetime | default, any, <PATTERN> | time.Time |
+| time | default, any, <PATTERN> | time.Time |
 | year | default | time.Time |
 | yearmonth | default | time.Time |
 
@@ -214,7 +222,7 @@ Available types, formats and resultant value of the cast:
 Once you're done processing the data, it is time to persist results. As an example, let us assume we have a remote table schema called `summary`, which contains two fields:
 
 * `Date`: of type [date](https://specs.frictionlessdata.io/table-schema/#date)
-* `AverageAge`: of type [number](https://specs.frictionlessdata.io/table-schema/#number)
+* `AverageAge`: of type [number](https://specs.frictionlessdata.io/table-schema/#number) 
 
 
 ```go
