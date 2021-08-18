@@ -57,8 +57,8 @@ function Home() {
       </div>
       <div className={classnames(styles.announcement, styles.announcementDark)}>
         <div className={styles.announcementInner}>
-          Frictionless is a set of libraries implementing Frictionless
-          Specifications for 10 programming languages.
+          Frictionless is a set of libraries implementing Frictionless Standards
+          for 10 programming languages.
         </div>
       </div>
       <div className={styles.section}>
