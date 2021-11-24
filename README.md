@@ -4,7 +4,7 @@
 [![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/libraries)
 [![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discord.com/channels/695635777199145130/695635777199145133)
 
-Frictionless Libraries implement Frictionless Specifications for 10 programming languages.
+Data integration libraries for 10 programming languages that implement Frictionless Data concepts in code.
 
 ## Purpose
 
