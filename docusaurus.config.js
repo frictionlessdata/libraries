@@ -50,12 +50,6 @@ module.exports = {
       theme: require("prism-react-renderer/themes/github"),
       darkTheme: require("prism-react-renderer/themes/dracula"),
     },
-    gtag: {
-      trackingID: "G-WY2G1YK3M9",
-    },
-    // googleAnalytics: {
-    //   trackingID: 'UA-141789564-1',
-    // },
     algolia: {
       apiKey: "a77529da1844c2a2c51a13571734e7cb",
       indexName: "frictionlessdata",
